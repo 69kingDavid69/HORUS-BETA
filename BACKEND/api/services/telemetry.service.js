@@ -133,7 +133,7 @@ export async function dispatchScanTelemetry(scanResult) {
         return;
     }
 
-    console.log(`[TELEMETRY] Dispatching ${events.length} events for ${host} → ${UNIFIED_API_BASE}`);
+    console.log(`[TELEMETRY] Dispatching ${events.length} events for ${host} -> ${UNIFIED_API_BASE}`);
 
     // Send all events concurrently (fire-and-forget, non-blocking)
     await Promise.allSettled(events.map(sendEvent));

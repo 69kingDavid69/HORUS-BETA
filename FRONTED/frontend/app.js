@@ -1462,7 +1462,7 @@ async function runRemediationAction(action) {
             }
 
             remediationOutput.textContent =
-                `✅ Remediación completada:\n` +
+                `Remediacion completada:\n` +
                 `  Total findings: ${payload.total ?? '?'}\n` +
                 `  Ejecutados:     ${payload.executed ?? '?'}\n` +
                 `  Omitidos:       ${payload.skipped ?? '?'}\n\n` +
@@ -1474,7 +1474,7 @@ async function runRemediationAction(action) {
             // Auto relaunch deep scan so the UI reflects the fixed surface
             if (scannedIp) {
                 setTimeout(() => {
-                    remediationOutput.textContent += '\n\n⏳ Re-escaneando objetivo para verificar correcciones...';
+                    remediationOutput.textContent += '\n\nRe-escaneando objetivo para verificar correcciones...';
                     launchDeepScan(scannedIp);
                 }, 1500);
             }
