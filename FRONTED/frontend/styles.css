@@ -66,7 +66,7 @@ body::before {
     pointer-events: none;
 }
 
-/* Partículas digitales flotantes */
+/* Floating digital particles */
 body::after {
     content: "";
     position: fixed;
@@ -217,7 +217,7 @@ body::after {
     box-shadow: 0 0 30px rgba(34, 211, 238, 0.05);
 }
 
-/* Línea de acento izquierda en cards */
+/* Left accent line on cards */
 .scan-card::before,
 .result-card::before {
     content: '';
@@ -1401,7 +1401,7 @@ body::after {
    NUEVO: Hero Globe + FAB Chat
    ══════════════════════════════════════════ */
 
-/* Hero centrado verticalmente para el globo */
+/* Hero vertically centered for the globe */
 .hero {
     display: flex;
     flex-direction: column;
@@ -1432,7 +1432,7 @@ body::after {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;  /* título pegado abajo */
+    justify-content: flex-end;  /* title pinned to the bottom */
     padding-bottom: 48px;
     gap: 0;
     background: transparent;
@@ -1440,7 +1440,7 @@ body::after {
     z-index: 50;
 }
 
-/* Canvas de globo: fondo fijo que cubre todo el panel izquierdo */
+/* Globe canvas: fixed background covering the full left panel */
 #globeCanvas {
     position: fixed;
     top: 0;
@@ -1481,7 +1481,7 @@ body::after {
     z-index: 51;
 }
 
-/* ── FAB botón flotante ── */
+/* Floating action button (FAB) */
 .chat-fab {
     position: fixed;
     bottom: 28px;

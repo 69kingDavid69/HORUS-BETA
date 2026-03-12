@@ -4,10 +4,10 @@ import { networkInterfaces } from "os";
 import IPCIDR from "ip-cidr";
 
 // EN: Core scanning service (network discovery, deep Nmap scan, Hydra checks).
-// es Hydra).
+// EN: Includes network discovery plus deep Nmap and Hydra checks.
 
 // EN: Services that can be tested by Hydra credential checks.
-// ser verificados por Hydra.
+// EN: Maps service ports that can be tested by Hydra.
 const hydraTargets = {
     "22": "ssh",
     "21": "ftp",
@@ -20,7 +20,7 @@ const hydraTargets = {
 };
 
 // EN: Scanner container image and optional Docker network override.
-// al para laboratorio.
+// EN: Optional Docker network override for lab environments.
 function getScannerDockerImage() {
     return process.env.KALI_CONTAINER || "kali-redteam";
 }
@@ -32,7 +32,7 @@ const hydraServiceCooldowns = new Map();
 const hydraHostCooldowns = new Map();
 
 // EN: Output patterns used to detect defensive controls in target services.
-// servicios objetivo.
+// EN: Patterns used to detect defensive controls in target services.
 const hydraLockoutPatterns = [
     /account\s+(?:is\s+)?locked/i,
     /locked\s+out/i,
@@ -295,7 +295,6 @@ function getHydraPolicy(scanPolicy) {
 
 /**
  * EN: Infer lockout/rate-limit signals from Hydra output.
-// ales de lockout/rate-limit desde la salida de Hydra.
  */
 function detectHydraDefenseSignals(rawOutput) {
     const output = (rawOutput || "").toLowerCase();
@@ -306,7 +305,6 @@ function detectHydraDefenseSignals(rawOutput) {
 
 /**
  * EN: Extract a compact, UI-friendly output summary.
- // compacto y util para la UI.
  */
 function summarizeHydraOutput(rawOutput) {
     if (!rawOutput) {
@@ -335,16 +333,14 @@ function getSubnetBoundaries(subnet) {
 }
 
 /**
- * EN: Check if a discovery reason is usually ambiguous/noisy.
-// to suele ser ambigua/ruidosa.
+ * EN: Check whether a discovery reason is usually ambiguous/noisy.
  */
 function isResetLikeReason(reason) {
     return reason === "reset" || reason === "conn-refused";
 }
 
 /**
- * EN: Read ARP cache and map IP -> MAC from the host OS.
- * ES: Leer cache ARP y mapear IP -> MAC desde el sistema host.
+ * EN: Read ARP cache and map IP -> MAC from the host system.
  */
 async function getArpMacByIp() {
     return new Promise((resolve) => {
@@ -578,14 +574,12 @@ export async function discoverHosts(subnet) {
 /**
  * EN: Run deep host scan and optional Hydra credential checks.
  * EN: Includes service/version detection, scripts, OS guesses, and traceroute.
-// ales.
-, scripts, OS y traceroute.
  */
 export async function runDeepScan(target) {
     const scanPolicy = getScanPolicy();
 
     // EN: Two-phase strategy: fast probe first, rich detail only on open ports.
-    // puertos abiertos.
+    // EN: Keep deep-detail phase focused on confirmed open ports.
     const probeArgs = [
         "-Pn",
         "-n",

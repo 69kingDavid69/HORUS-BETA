@@ -80,7 +80,7 @@ export async function generatePDFReport(aiReport, simulationMeta) {
 
             doc.moveDown(1);
 
-            // Indicador de riesgo
+            // Risk indicator
             const startY = doc.y + 10;
             doc
                 .roundedRect(doc.x, startY, 260, 30, 6)

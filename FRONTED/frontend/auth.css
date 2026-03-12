@@ -33,7 +33,7 @@
     gap: 0;
     position: relative;
 
-    /* Línea de acento superior */
+    /* Top accent line */
     border-top: 2px solid var(--accent-cyan);
 
     animation: authFadeIn 0.4s ease;
@@ -139,7 +139,7 @@
     box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.1);
 }
 
-/* ── Botón principal ── */
+/* Main button */
 .auth-btn {
     width: 100%;
     background: var(--accent-cyan);
@@ -211,7 +211,7 @@
     opacity: 0.75;
 }
 
-/* ── Barra de sesión (dentro del hero) ── */
+/* Session bar (inside hero area) */
 .session-bar {
     display: flex;
     align-items: center;

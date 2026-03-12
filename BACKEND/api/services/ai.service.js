@@ -58,11 +58,11 @@ export async function analyzeWithAI(rawScanData) {
         ]
     };
 
-    // OpenAI soporta response_format nativo; Ollama lo soporta en modelos recientes
+    // OpenAI supports native response_format; Ollama supports it on recent models
     if (provider === "openai") {
         requestBody.response_format = { type: "json_object" };
     } else {
-        // Reforzar instrucciones para modelos locales: formato JSON + rigor analítico
+        // Reinforce instructions for local models: JSON format + analytical rigor
         requestBody.messages[0].content += `
 
 IMPORTANT: You MUST respond with ONLY valid JSON. No markdown, no code fences, no extra text.
@@ -101,7 +101,7 @@ ANTI-HALLUCINATION RULES:
     let parsedAnalysis;
 
     try {
-        // Limpiar respuestas de modelos locales que a veces envuelven JSON en markdown
+        // Clean local-model responses that sometimes wrap JSON in markdown
         let cleanResponse = rawResponse.trim();
         if (cleanResponse.startsWith("```")) {
             cleanResponse = cleanResponse.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");

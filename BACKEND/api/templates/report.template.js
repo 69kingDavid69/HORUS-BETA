@@ -1,6 +1,6 @@
 import { getRiskCategory, getSeverityColor } from "../services/pdf.service.js";
 
-// HTML completo del reporte
+// Full report HTML
 
 export function buildReportHTML(aiReport, simulationMeta) {
     const {
@@ -11,7 +11,7 @@ export function buildReportHTML(aiReport, simulationMeta) {
         analysis_metadata,
     } = aiReport;
 
-    // Valores por defecto si no vienen en simulationMeta
+    // Default values if simulationMeta fields are missing
     const target = simulationMeta?.target || "Objetivo no especificado";
     const scanDate = simulationMeta?.scan_date
         ? new Date(simulationMeta.scan_date).toLocaleDateString("es-ES", {
@@ -26,7 +26,7 @@ export function buildReportHTML(aiReport, simulationMeta) {
           });
     const projectName = simulationMeta?.project_name || "Evaluación de Seguridad";
 
-    // Categoria del riesgo general
+    // Overall risk category
     const riskCategory = getRiskCategory(risk_score);
     const riskColor = getSeverityColor(riskCategory.toLowerCase());
 
@@ -53,7 +53,7 @@ export function buildReportHTML(aiReport, simulationMeta) {
     `;
 }
 
-// CSS global del reporte
+// Global report CSS
 // Estilos profesionales, limpios y estructurados
  
 function getReportStyles() {
@@ -275,7 +275,7 @@ function getReportStyles() {
     `;
 }
 
-// Portada del reporte
+// Report cover
 
 function buildCoverPage(projectName, target, scanDate) {
     return `
@@ -319,7 +319,7 @@ function buildExecutiveSummary(summary, riskScore, riskCategory, riskColor) {
     `;
 }
 
-// Tabla resumen de vulnerabilidades
+// Vulnerability summary table
 
 function buildVulnerabilitiesTable(vulnerabilities) {
     if (!vulnerabilities || vulnerabilities.length === 0) {
@@ -449,7 +449,7 @@ function buildRecommendations(recommendations) {
     `;
 }
 
-// Disclaimer legal
+// Legal disclaimer
 
 function buildDisclaimer() {
     return `
@@ -459,22 +459,22 @@ function buildDisclaimer() {
                 <p>
                     Este reporte ha sido generado mediante un análisis automatizado de seguridad realizado por 
                     <strong>HORUS SECURITY</strong>. La información contenida en este documento tiene fines
-                    // educativos y de evaluación de seguridad.
+                    // for educational and security assessment purposes.
                 </p>
                 <p style="margin-top: 10px;">
                     <strong>Responsabilidad:</strong> El uso de esta herramienta debe realizarse únicamente en sistemas
-                    // sobre los cuales se tiene autorización explícita. El mal uso de este software puede violar leyes de
-                    // ciberseguridad y privacidad. Los autores no se hacen responsables del uso indebido de esta herramienta.
+                    // where explicit authorization has been granted. Misuse of this software may violate laws on
+                    // cybersecurity and privacy. The authors are not responsible for misuse of this tool.
                 </p>
                 <p style="margin-top: 10px;">
                     <strong>Precisión:</strong> Si bien el análisis utiliza inteligencia artificial y herramientas 
-                    // especializadas, no garantiza la detección de todas las vulnerabilidades existentes. Se recomienda
-                    // complementar este reporte con auditorías manuales realizadas por profesionales certificados.
+                    // specialized capabilities, it does not guarantee detection of all existing vulnerabilities. It is recommended to
+                    // complement this report with manual audits performed by certified professionals.
                 </p>
                 <p style="margin-top: 10px;">
                     <strong>Confidencialidad:</strong> Este documento contiene información sensible sobre la seguridad
-                    // del sistema analizado. Debe ser tratado de forma confidencial y compartido únicamente con personal
-                    // autorizado.
+                    // about the analyzed system. It must be treated as confidential and shared only with
+                    // authorized personnel.
                 </p>
             </div>
         </div>
@@ -482,8 +482,8 @@ function buildDisclaimer() {
 }
 
 
-// Escapa caracteres HTML para prevenir XSS
-// (aunque el PDF no ejecuta JS, es buena práctica)
+// Escape HTML characters to prevent XSS
+// (even though the PDF does not execute JS, this is good practice)
 
 function escapeHtml(text) {
     if (!text) return "";

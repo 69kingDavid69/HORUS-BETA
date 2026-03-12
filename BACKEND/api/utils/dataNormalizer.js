@@ -1,21 +1,21 @@
 /**
- * Data Normalizer - Capa de Normalizacion de Datos
+ * Data Normalizer - Data Normalization Layer
  * 
- * Este modulo transforma el JSON crudo del escaneo docker.service.js
- * al formato estructurado del MER (Modelo Entidad-Relacion).
+ * This module transforms raw scan JSON from docker.service.js
+ * into the structured MER format (Entity-Relationship Model).
  * 
- * Simula la estructura de la base de datos sin implementar la persistencia real.
- * Cuando se integre la BD, este normalizador servira como base para los modelos.
+ * It simulates the database structure without implementing real persistence.
+ * When DB persistence is integrated, this normalizer will serve as the model baseline.
  * 
- * IMPORTANTE: Este normalizador sigue EXACTAMENTE el esquema del MER proporcionado
- * por el equipo de base de datos (drawSQL-mysql-export-2026-02-20.sql)
+ * IMPORTANT: This normalizer follows EXACTLY the MER schema provided
+ * by the database team (drawSQL-mysql-export-2026-02-20.sql)
  */
 
 /**
- * Normaliza los datos de un escaneo completo al formato del MER
+ * Normalizes full-scan data into MER format
  * 
- * @param {Object} rawScanData - Datos crudos del escaneo de docker.service.js
- * @returns {Object} Datos normalizados siguiendo la estructura del MER
+ * @param {Object} rawScanData - Raw scan data from docker.service.js
+ * @returns {Object} Normalized data following MER structure
  */
 export function normalizeScanDataToMER(rawScanData) {
     const normalizedData = {
@@ -32,9 +32,9 @@ export function normalizeScanDataToMER(rawScanData) {
 }
 
 /**
- * Normaliza los datos de la tabla Simulations
+ * Normalizes data for the Simulations table
  * 
- * Campos del MER (SQL Real):
+ * MER fields (real SQL):
  * - id (INT AUTO_INCREMENT)
  * - user_id (INT NOT NULL)
  * - scan_type (ENUM: 'network_detect', 'discover', 'deep_scan')
@@ -53,15 +53,15 @@ export function normalizeScanDataToMER(rawScanData) {
 function normalizeSimulation(rawData) {
     const now = new Date().toISOString();
     
-    // Determinar scan_type basado en los datos
-    let scanType = 'deep_scan'; // Por defecto
+    // Determine scan_type based on data
+    let scanType = 'deep_scan'; // Default
     if (rawData.subnet) {
         scanType = 'discover';
     } else if (rawData.scan_type) {
         scanType = rawData.scan_type;
     }
     
-    // Parsear scan_time a segundos
+    // Parse scan_time into seconds
     let scanTimeSeconds = null;
     if (rawData.scan_time) {
         const timeStr = String(rawData.scan_time);
@@ -73,7 +73,7 @@ function normalizeSimulation(rawData) {
     
     return {
         id: generateSimulationId(),
-        user_id: null, // Se asignara cuando haya autenticacion
+        user_id: null, // Assigned when authentication is available
         scan_type: scanType,
         target_subnet: rawData.subnet || null,
         target_ip: rawData.host || rawData.target || null,
@@ -90,9 +90,9 @@ function normalizeSimulation(rawData) {
 }
 
 /**
- * Normaliza los datos de la tabla Hosts
+ * Normalizes data for the Hosts table
  * 
- * Campos del MER (SQL Real):
+ * MER fields (real SQL):
  * - id (INT AUTO_INCREMENT)
  * - simulation_id (INT NOT NULL)
  * - user_id (INT NOT NULL)
@@ -110,7 +110,7 @@ function normalizeHost(rawData) {
     const osDetection = rawData.os_detection || {};
     const now = new Date().toISOString();
     
-    // Construir string de os_detection consolidado
+    // Build consolidated os_detection string
     let osDetectionStr = null;
     if (osDetection.name) {
         osDetectionStr = osDetection.name;
@@ -124,8 +124,8 @@ function normalizeHost(rawData) {
     
     return {
         id: generateHostId(),
-        simulation_id: null, // Se relacionara con la simulacion
-        user_id: null, // Se asignara cuando haya autenticacion
+        simulation_id: null, // Linked to the simulation
+        user_id: null, // Assigned when authentication is available
         ip_address: rawData.host || networkInfo.ip || networkInfo.host_ip || null,
         mac_address: rawData.mac || networkInfo.mac || networkInfo.mac_address || null,
         mac_vendor: rawData.vendor || networkInfo.vendor || networkInfo.mac_vendor || null,
@@ -138,9 +138,9 @@ function normalizeHost(rawData) {
 }
 
 /**
- * Normaliza los datos de la tabla Ports
+ * Normalizes data for the Ports table
  * 
- * Campos del MER (SQL Real):
+ * MER fields (real SQL):
  * - id (INT AUTO_INCREMENT)
  * - host_id (INT NOT NULL)
  * - port_number (INT NOT NULL)
@@ -160,7 +160,7 @@ function normalizePorts(rawPorts) {
 
     return rawPorts.map((port, index) => ({
         id: generatePortId(index),
-        host_id: null, // Se relacionara con el host
+        host_id: null, // Linked to the host
         port_number: parseInt(port.port || port.port_number || 0),
         protocol: (port.protocol || 'tcp').toLowerCase(),
         state: port.state || 'unknown',
@@ -174,9 +174,9 @@ function normalizePorts(rawPorts) {
 }
 
 /**
- * Normaliza los datos de la tabla CredentialTests
+ * Normalizes data for the CredentialTests table
  * 
- * Campos del MER (SQL Real):
+ * MER fields (real SQL):
  * - id (INT AUTO_INCREMENT)
  * - simulation_id (INT NOT NULL)
  * - host_id (INT NOT NULL)
@@ -195,32 +195,32 @@ function normalizeCredentialTests(rawCredentialTests, rawPorts) {
     }
 
     return rawCredentialTests.map((test, index) => {
-        // Intentar encontrar el port_id correspondiente
+        // Try to find the corresponding port_id
         const portMatch = rawPorts.find(p => String(p.port) === String(test.port));
         const portId = portMatch ? generatePortId(rawPorts.indexOf(portMatch)) : null;
 
-        // Extraer credenciales encontradas
+        // Extract discovered credentials
         const credentials = test.credentials || [];
         const foundCred = credentials.find(c => c.success === true) || {};
 
-        // Calcular risk_score basado en si se encontraron credenciales
+        // Calculate risk_score based on discovered credentials
         let riskScore = null;
         if (foundCred.username && foundCred.password) {
-            riskScore = 10; // Maximo riesgo si se encontraron credenciales
+            riskScore = 10; // Maximum risk when credentials were found
         } else if (test.status === 'lockout_detected') {
-            riskScore = 3; // Bajo riesgo, tiene proteccion
+            riskScore = 3; // Low risk, protection is present
         } else if (test.status === 'rate_limited') {
-            riskScore = 4; // Bajo-medio riesgo, tiene rate limiting
+            riskScore = 4; // Low-medium risk, rate limiting is present
         } else {
-            riskScore = 5; // Riesgo medio, no se pudo determinar
+            riskScore = 5; // Medium risk, could not be determined precisely
         }
 
         return {
             id: generateCredentialTestId(index),
-            simulation_id: null, // Se relacionara con la simulacion
-            host_id: null, // Se relacionara con el host
+            simulation_id: null, // Linked to the simulation
+            host_id: null, // Linked to the host
             port_id: portId,
-            user_id: null, // Se asignara cuando haya autenticacion
+            user_id: null, // Assigned when authentication is available
             service: test.service || null,
             status: test.status || 'completed',
             found_username: foundCred.username || null,
@@ -232,9 +232,9 @@ function normalizeCredentialTests(rawCredentialTests, rawPorts) {
 }
 
 /**
- * Normaliza vulnerabilidades de los scripts NSE
+ * Normalizes vulnerabilities from NSE scripts
  * 
- * Campos del MER (SQL Real):
+ * MER fields (real SQL):
  * - id (INT AUTO_INCREMENT)
  * - simulation_id (INT NOT NULL)
  * - host_id (INT NOT NULL)
@@ -247,14 +247,14 @@ function normalizeCredentialTests(rawCredentialTests, rawPorts) {
 function normalizeVulnerabilities(rawData) {
     const vulnerabilities = [];
     
-    // Vulnerabilidades explicitas del escaneo
+    // Explicit vulnerabilities from scan data
     if (Array.isArray(rawData.vulnerabilities)) {
         rawData.vulnerabilities.forEach((vuln, index) => {
             vulnerabilities.push({
                 id: generateVulnerabilityId(index),
-                simulation_id: null, // Se relacionara con la simulacion
-                host_id: null, // Se relacionara con el host
-                port_id: null, // Se relacionara con el puerto si aplica
+                simulation_id: null, // Linked to the simulation
+                host_id: null, // Linked to the host
+                port_id: null, // Linked to the port when applicable
                 script_id: vuln.script_id || 'unknown',
                 severity: mapSeverityToMER(vuln.severity),
                 output: vuln.output || vuln.description || null,
@@ -267,7 +267,7 @@ function normalizeVulnerabilities(rawData) {
 }
 
 /**
- * Normaliza datos de traceroute
+ * Normalizes traceroute data
  */
 function normalizeTraceroute(rawTraceroute) {
     if (!Array.isArray(rawTraceroute)) {
@@ -283,7 +283,7 @@ function normalizeTraceroute(rawTraceroute) {
 }
 
 /**
- * Normaliza scripts NSE
+ * Normalizes NSE scripts
  */
 function normalizeScripts(rawScripts) {
     if (!Array.isArray(rawScripts)) {
@@ -298,7 +298,7 @@ function normalizeScripts(rawScripts) {
 }
 
 /**
- * Mapea el estado del escaneo al formato del MER
+ * Maps scan status to MER format
  * MER ENUM: 'pending', 'running', 'completed', 'failed'
  */
 function mapScanStatus(rawStatus) {
@@ -316,7 +316,7 @@ function mapScanStatus(rawStatus) {
 }
 
 /**
- * Mapea la severidad al formato del MER
+ * Maps severity to MER format
  * MER ENUM: 'critical', 'high', 'medium', 'low'
  */
 function mapSeverityToMER(rawSeverity) {
@@ -329,7 +329,7 @@ function mapSeverityToMER(rawSeverity) {
         return sev;
     }
     
-    // Mapeo de variaciones
+    // Mapping for severity/status variations
     if (sev.includes('crit')) return 'critical';
     if (sev.includes('high') || sev.includes('severe')) return 'high';
     if (sev.includes('low') || sev.includes('minor')) return 'low';
@@ -338,7 +338,7 @@ function mapSeverityToMER(rawSeverity) {
 }
 
 /**
- * Generadores de IDs simulados (cuando se integre BD, seran autoincrement)
+ * Simulated ID generators (when DB is integrated, these become auto-increment IDs)
  */
 function generateSimulationId() {
     return `sim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -361,14 +361,14 @@ function generateVulnerabilityId(index) {
 }
 
 /**
- * Prepara los datos normalizados para el analisis con IA
+ * Prepares normalized data for AI analysis
  * 
- * Transforma la estructura del MER en el formato esperado por aiPromptBuilder.js
+ * Transforms MER structure into the format expected by aiPromptBuilder.js
  */
 export function prepareDataForAIAnalysis(normalizedData) {
     const { simulation, host, ports, credentialTests, vulnerabilities, traceroute, scripts } = normalizedData;
 
-    // Parsear os_detection string de vuelta a componentes
+    // Parse os_detection string back into components
     let osName = null;
     let osAccuracy = null;
     let osFamily = null;
@@ -384,7 +384,7 @@ export function prepareDataForAIAnalysis(normalizedData) {
     }
 
     return {
-        // Informacion de la simulacion
+        // Simulation information
         simulation_id: simulation.id,
         scan_type: simulation.scan_type,
         target: simulation.target_ip || simulation.target_subnet,
@@ -392,12 +392,12 @@ export function prepareDataForAIAnalysis(normalizedData) {
         nmap_version: simulation.nmap_version,
         nmap_command: simulation.nmap_command,
 
-        // Informacion del host
+        // Host information
         host: host.ip_address,
         hostname: host.hostname,
-        status: 'up',  // Si hay datos, el host esta up
+        status: 'up',  // If data exists, host is considered up
 
-        // Informacion de red
+        // Network information
         network_info: {
             ip: host.ip_address,
             hostname: host.hostname,
@@ -410,14 +410,14 @@ export function prepareDataForAIAnalysis(normalizedData) {
             traceroute_hops: traceroute.length
         },
 
-        // Deteccion de SO (para compatibilidad con prompt)
+        // OS detection (for prompt compatibility)
         os_detection: osName ? {
             name: osName,
             accuracy: osAccuracy,
             os_family: osFamily
         } : null,
 
-        // Puertos
+        // Ports
         ports: ports.map(p => ({
             port: p.port_number,
             protocol: p.protocol,
@@ -429,7 +429,7 @@ export function prepareDataForAIAnalysis(normalizedData) {
             cpe: p.cpe
         })),
 
-        // Pruebas de credenciales
+        // Credential tests
         credential_tests: credentialTests.map(ct => ({
             service: ct.service,
             port: ports.find(p => p.id === ct.port_id)?.port_number || null,
@@ -440,7 +440,7 @@ export function prepareDataForAIAnalysis(normalizedData) {
             risk_score: ct.risk_score
         })),
 
-        // Vulnerabilidades
+        // Vulnerabilities
         vulnerabilities: vulnerabilities.map(v => ({
             script_id: v.script_id,
             severity: v.severity,
@@ -450,20 +450,20 @@ export function prepareDataForAIAnalysis(normalizedData) {
         // Traceroute
         traceroute: traceroute,
 
-        // Scripts NSE
+        // NSE scripts
         scripts: scripts
     };
 }
 
 /**
- * Prepara la respuesta de IA para almacenamiento
+ * Prepares AI response for storage
  * 
- * NOTA: NO existe tabla AIAnalysis en el MER real.
- * El analisis de IA puede guardarse en Simulations.json_response
- * o en una tabla Reports como archivo JSON/PDF generado.
+ * NOTE: There is no AIAnalysis table in the real MER.
+ * AI analysis can be stored in Simulations.json_response
+ * or in a Reports table as a generated JSON/PDF artifact.
  * 
- * Esta funcion prepara el analisis para ser almacenado como JSON
- * en el campo json_response de Simulations.
+ * This function prepares analysis to be stored as JSON
+ * in the Simulations.json_response field.
  */
 export function prepareAIAnalysisForStorage(aiResponse, simulationId) {
     return {
@@ -487,44 +487,44 @@ export function prepareAIAnalysisForStorage(aiResponse, simulationId) {
     };
 }
 
-// Valida que los datos normalizados tengan la estructura correcta del MER
+// Validates normalized data against the expected MER structure
 
 export function validateNormalizedData(normalizedData) {
     const errors = [];
 
-    // Validar Simulation (campos requeridos segun MER)
+    // Validate Simulation (required fields per MER)
     if (!normalizedData.simulation) {
         errors.push('Missing simulation data');
     } else {
-        // scan_type es requerido en el MER
+        // scan_type is required in MER
         if (!normalizedData.simulation.scan_type) {
             errors.push('Simulation.scan_type is required');
         }
         
-        // Debe tener target_ip o target_subnet
+        // Must include target_ip or target_subnet
         if (!normalizedData.simulation.target_ip && !normalizedData.simulation.target_subnet) {
             errors.push('Simulation must have target_ip or target_subnet');
         }
         
-        // status es requerido
+        // status is required
         if (!normalizedData.simulation.status) {
             errors.push('Simulation.status is required');
         }
         
-        // Validar ENUM de status
+        // Validate status ENUM
         const validStatuses = ['pending', 'running', 'completed', 'failed'];
         if (normalizedData.simulation.status && !validStatuses.includes(normalizedData.simulation.status)) {
             errors.push(`Simulation.status must be one of: ${validStatuses.join(', ')}`);
         }
         
-        // Validar ENUM de scan_type
+        // Validate scan_type ENUM
         const validScanTypes = ['network_detect', 'discover', 'deep_scan'];
         if (normalizedData.simulation.scan_type && !validScanTypes.includes(normalizedData.simulation.scan_type)) {
             errors.push(`Simulation.scan_type must be one of: ${validScanTypes.join(', ')}`);
         }
     }
 
-    // Validar Host (campos requeridos segun MER)
+    // Validate Host (required fields per MER)
     if (!normalizedData.host) {
         errors.push('Missing host data');
     } else {
@@ -533,11 +533,11 @@ export function validateNormalizedData(normalizedData) {
         }
     }
 
-    // Validar Ports
+    // Validate Ports
     if (!Array.isArray(normalizedData.ports)) {
         errors.push('Ports must be an array');
     } else {
-        // Validar estructura de cada puerto
+        // Validate each port structure
         normalizedData.ports.forEach((port, index) => {
             if (!port.port_number || typeof port.port_number !== 'number') {
                 errors.push(`Port[${index}].port_number must be a number`);
@@ -551,12 +551,12 @@ export function validateNormalizedData(normalizedData) {
         });
     }
 
-    // Validar CredentialTests
+    // Validate CredentialTests
     if (!Array.isArray(normalizedData.credentialTests)) {
         errors.push('CredentialTests must be an array');
     }
     
-    // Validar Vulnerabilities
+    // Validate Vulnerabilities
     if (!Array.isArray(normalizedData.vulnerabilities)) {
         errors.push('Vulnerabilities must be an array');
     } else {

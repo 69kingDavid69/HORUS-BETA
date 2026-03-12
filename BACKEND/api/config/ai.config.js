@@ -7,14 +7,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const envPath = path.join(__dirname, "..", ".env");
 
-// Carga inicial
+// Initial load
 dotenv.config({ path: envPath });
 
-/** Claves de IA que se pueden recargar en caliente */
+/** AI keys that can be hot-reloaded */
 const AI_ENV_KEYS = ["AI_PROVIDER", "OLLAMA_BASE_URL", "OLLAMA_MODEL", "OLLAMA_TEMPERATURE", "OPENAI_API_KEY", "OPENAI_MODEL", "OPENAI_TEMPERATURE", "OPENAI_MAX_TOKENS"];
 
 /**
- * Re-lee SOLO las variables de IA del .env, sin pisar las de Docker (DB_HOST, etc).
+ * Re-read ONLY AI variables from .env, without overriding Docker/runtime values (DB_HOST, etc).
  */
 function reloadEnv() {
     let raw;
@@ -42,7 +42,7 @@ function parseIntEnv(name, fallback) {
 }
 
 /**
- * Devuelve el proveedor activo: "openai" u "ollama"
+ * Returns the active provider: "openai" or "ollama"
  */
 export function getAIProvider() {
     reloadEnv();
@@ -54,7 +54,7 @@ export function getAIProvider() {
 }
 
 /**
- * Configuración unificada del modelo IA
+ * Unified AI model configuration
  */
 export function getAIConfig() {
     const provider = getAIProvider();
@@ -79,7 +79,7 @@ export function getAIConfig() {
 }
 
 /**
- * Verifica si el proveedor IA está configurado correctamente
+ * Checks whether the active AI provider is configured correctly
  */
 export function isAIConfigured() {
     const provider = getAIProvider();
@@ -97,9 +97,9 @@ let aiClientPromise = null;
 let currentProvider = null;
 
 /**
- * Retorna un cliente OpenAI configurado para el proveedor activo.
- * Tanto OpenAI como Ollama usan la misma interfaz gracias a la
- * compatibilidad de Ollama con la API de OpenAI.
+ * Returns an OpenAI client configured for the active provider.
+ * OpenAI and Ollama share the same interface thanks to
+ * Ollama compatibility with the OpenAI API.
  */
 export async function getAIClient() {
     const provider = getAIProvider();
@@ -111,7 +111,7 @@ export async function getAIClient() {
         throw new Error("OpenAI is not configured. Set OPENAI_API_KEY in BACKEND/api/.env");
     }
 
-    // Resetear cliente si cambió el proveedor
+    // Reset client if provider changed
     if (currentProvider !== provider) {
         aiClientPromise = null;
         currentProvider = provider;
@@ -133,7 +133,7 @@ export async function getAIClient() {
             const clientOptions = {};
 
             if (provider === "ollama") {
-                // Ollama no necesita API key real, pero el SDK la requiere
+                // Ollama does not need a real API key, but the SDK requires one
                 clientOptions.apiKey = "ollama";
                 clientOptions.baseURL = config.baseURL;
             } else {
@@ -147,7 +147,7 @@ export async function getAIClient() {
     return aiClientPromise;
 }
 
-// ── Compatibilidad: re-exportar con nombres originales ─────────────
+// Compatibility: re-export using original names
 export const getOpenAIConfig = getAIConfig;
 export const isOpenAIConfigured = isAIConfigured;
 export const getOpenAIClient = getAIClient;

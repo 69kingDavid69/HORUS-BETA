@@ -1,24 +1,24 @@
 /**
- * AI Prompt Builder - Construccion de Prompts Estructurados
+ * AI Prompt Builder - Structured Prompt Construction
  * 
- * Este modulo construye los prompts del sistema y usuario para OpenAI.
- * Trabaja con datos ya normalizados al formato del MER desde dataNormalizer.js
+ * This module builds system and user prompts for OpenAI.
+ * It works with data already normalized to the MER format via dataNormalizer.js.
  * 
- * Flujo:
- * 1. docker.service.js retorna JSON crudo del escaneo
- * 2. dataNormalizer.js transforma al formato MER
- * 3. prepareDataForAIAnalysis() prepara estructura para IA
- * 4. Este modulo construye prompts optimizados
- * 5. ai.service.js envia a OpenAI API
+ * Flow:
+ * 1. docker.service.js returns raw scan JSON
+ * 2. dataNormalizer.js transforms it into MER format
+ * 3. prepareDataForAIAnalysis() prepares the AI-ready structure
+ * 4. This module builds optimized prompts
+ * 5. ai.service.js sends it to the OpenAI API
  */
 
 /**
- * Construye el prompt del sistema para OpenAI
+ * Builds the system prompt for OpenAI
  * 
- * Define el rol, el formato de respuesta esperado y las reglas criticas.
- * La respuesta debe ser compatible con la tabla AIAnalysis del MER.
+ * Defines the role, expected response format, and critical rules.
+ * The response must be compatible with the MER AIAnalysis table.
  * 
- * Campos objetivo del MER (AIAnalysis):
+ * MER target fields (AIAnalysis):
  * - executive_summary, overall_risk_score, risk_level
  * - vulnerabilities_json, network_exposure_json
  * - compliance_notes_json, immediate_actions_json
@@ -89,10 +89,10 @@ CRITICAL RULES:
 }
 
 /**
- * Construye el prompt del usuario con los datos del escaneo
+ * Builds the user prompt with scan data
  * 
- * Recibe datos ya normalizados al formato del MER y los estructura
- * en un prompt claro y conciso para el analisis.
+ * Receives data already normalized to MER format and structures it
+ * into a clear and concise prompt for analysis.
  */
 export function buildUserPrompt(scanData) {
     const {
@@ -112,7 +112,7 @@ export function buildUserPrompt(scanData) {
         simulation_id
     } = scanData;
 
-    // Mapear puertos con informacion relevante
+    // Map ports with relevant information
     const portsInfo = ports.map((p) => ({
         port: p.port || p.port_number,
         state: p.state,
@@ -122,7 +122,7 @@ export function buildUserPrompt(scanData) {
         cpe: p.cpe
     }));
 
-    // Informacion del sistema operativo
+    // Operating system information
     const osInfo = os_detection
         ? {
               name: os_detection.name,
@@ -131,7 +131,7 @@ export function buildUserPrompt(scanData) {
           }
         : null;
 
-    // Mapear pruebas de credenciales con enfoque en seguridad
+    // Map credential test results with a security focus
     const credentialInfo = credential_tests.map((ct) => ({
         service: ct.service,
         port: ct.port,
@@ -145,7 +145,7 @@ export function buildUserPrompt(scanData) {
         output_summary: ct.output_summary ? ct.output_summary.substring(0, 150) : null
     }));
 
-    // Limitar output de scripts para optimizar tokens
+    // Limit script output to optimize token usage
     const scriptInfo = scripts.map((s) => ({
         id: s.id || s.script_id,
         output: s.output?.substring(0, 200),
@@ -254,10 +254,10 @@ Your response will be stored in the AIAnalysis table of the database.`;
 }
 
 /**
- * Valida que los datos de simulacion tengan los campos minimos requeridos
+ * Validates that simulation data includes the minimum required fields
  * 
- * Esta es una validacion basica antes de la normalizacion.
- * La validacion completa del MER se realiza en dataNormalizer.js
+ * This is a basic validation before normalization.
+ * Full MER validation is performed in dataNormalizer.js
  */
 export function validateSimulationData(simulationData) {
     if (!simulationData || typeof simulationData !== "object") {
@@ -288,9 +288,9 @@ export function validateSimulationData(simulationData) {
 }
 
 /**
- * Sanitiza los datos de simulacion para optimizar uso de tokens
+ * Sanitizes simulation data to optimize token usage
  * 
- * Limita el tamano de campos grandes y normaliza arrays vacios
+ * Limits large-field size and normalizes empty arrays
  */
 export function sanitizeSimulationData(simulationData) {
     const sanitized = JSON.parse(JSON.stringify(simulationData));
