@@ -82,7 +82,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // Static frontend
-const frontendDirectory = path.join(__dirname, "../../FRONTED/frontend");
+const frontendDirectory = path.join(__dirname, "../../FRONTED");
 
 // Explicitly serve landing.html on root
 app.get("/", (req, res) => {

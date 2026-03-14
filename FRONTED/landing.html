@@ -641,6 +641,30 @@
         #heroCanvas {
             mix-blend-mode: screen;
         }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .risk-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
     </style>
 </head>
 
