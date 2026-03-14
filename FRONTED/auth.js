@@ -3,11 +3,8 @@
    ═══════════════════════════════════════════ */
 
 (function () {
-    // En Vercel no hay backend, apuntamos a la futura IP del VPS
-    let API_BASE = "http://TU_FUTURA_IP_DEL_VPS:3000";
-    
-    // Si estamos probando en local o usando Live Server, forzamos localhost
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' || window.location.port === '5500') {
+    let API_BASE = "http://127.0.0.1:3000"; // Reemplaza esto con la IP de tu VPS cuando lo tengas
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
         API_BASE = 'http://localhost:3000';
     }
     const API_AUTH = `${API_BASE}/api/auth`;
