@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════ */
 
 (function () {
-    let API_BASE = "http://127.0.0.1:3000"; // Reemplaza esto con la IP de tu VPS cuando lo tengas
+    let API_BASE = "https://horus-beta-tau.vercel.app"; // Apunta al backend real cuando esté desplegado, o usa la misma URL por ahora si es fullstack
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
         API_BASE = 'http://localhost:3000';
     }
