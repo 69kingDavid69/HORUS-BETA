@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Horus — Autonomous cybersecurity platform. Analyze, understand and strengthen your company's digital security before an attack occurs.">
+    <title>HORUS — Autonomous Offensive Security</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x13082;</text></svg>">
+    <style>
+        :root {
+            --bg: #020a10;
+            --surface: #051420;
+            --accent: #22d3ee;
+            --accent-glow: rgba(34, 211, 238, 0.3);
+            --red: #ef4444;
+            --white: #f8fafc;
+            --gray: #94a3b8;
+            --orbitron: 'Orbitron', sans-serif;
+            --rajdhani: 'Rajdhani', sans-serif;
+            --mono: 'Share Tech Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: var(--rajdhani);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* UTILS */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            font-family: var(--orbitron);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--bg);
+            border: 1px solid var(--accent);
+        }
+
+        .btn-primary:hover {
+            background-color: transparent;
+            color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--accent-glow);
+        }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            background: rgba(2, 10, 16, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(34, 211, 238, 0.1);
+        }
+
+        .nav-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--orbitron);
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-cta {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* HERO */
+        #hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #heroCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .hero-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('src/images/global_Connected.jpeg') center/cover no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            filter: saturate(0.5) brightness(0.6);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--mono);
+            color: var(--accent);
+            font-size: 1rem;
+            margin-bottom: 20px;
+            display: block;
+            letter-spacing: 2px;
+        }
+
+        .hero-title {
+            font-family: var(--orbitron);
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .hero-title span {
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            font-family: var(--mono);
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 40px;
+            min-height: 1.5em;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            font-family: var(--mono);
+        }
+
+        .stat-item span {
+            display: block;
+        }
+
+        .stat-val {
+            font-size: 1.8rem;
+            color: var(--white);
+            font-weight: bold;
+        }
+
+        .stat-lbl {
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+
+        /* RISK */
+        #risk {
+            padding: 100px 0;
+            background-color: var(--surface);
+        }
+
+        .section-tag {
+            font-family: var(--mono);
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-family: var(--orbitron);
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .risk-visual {
+            position: relative;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            min-height: 320px;
+            aspect-ratio: 23 / 16;
+        }
+
+        .risk-gif {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #000;
+            filter: brightness(0.88) saturate(1.05);
+        }
+
+        .risk-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--red);
+            color: var(--red);
+            padding: 4px 10px;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            border-radius: 4px;
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .risk-content p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .risk-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .risk-list li {
+            margin-bottom: 15px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .risk-list li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.8rem;
+            top: 4px;
+        }
+
+        .risk-quote {
+            border-left: 3px solid var(--accent);
+            padding-left: 20px;
+            font-size: 1rem;
+            font-style: italic;
+            color: var(--white);
+        }
+
+        /* PILLARS */
+        #pillars {
+            padding: 100px 0;
+        }
+
+        .pillars-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .pillar-card {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid rgba(34, 211, 238, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pillar-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .pillar-num {
+            font-family: var(--orbitron);
+            font-size: 4rem;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            opacity: 0.05;
+            color: var(--accent);
+        }
+
+        .pillar-icon {
+            font-family: var(--mono);
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .pillar-card h3 {
+            font-family: var(--orbitron);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .pillar-card p {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .pillar-tech {
+            font-family: var(--mono);
+            color: var(--accent);
+            font-size: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 15px;
+            display: block;
+        }
+
+        /* PRICING */
+        #pricing {
+            padding: 100px 0;
+            background-color: var(--surface);
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .pricing-card {
+            background: var(--bg);
+            border: 1px solid rgba(34, 211, 238, 0.1);
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card--featured {
+            border-color: var(--accent);
+            transform: scale(1.05);
+            position: relative;
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.1);
+        }
+
+        .featured-label {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: var(--bg);
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            padding: 2px 12px;
+            font-weight: bold;
+            border-radius: 20px;
+        }
+
+        .pricing-card h4 {
+            font-family: var(--mono);
+            color: var(--gray);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .pricing-card .price {
+            font-family: var(--orbitron);
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .pricing-card .price span {
+            font-size: 1rem;
+            color: var(--gray);
+        }
+
+        .pricing-card .save {
+            color: var(--accent);
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 35px;
+        }
+
+        .pricing-features li {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--white);
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .pricing-note {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--gray);
+            font-family: var(--mono);
+            font-size: 0.8rem;
+        }
+
+        /* CLOSING */
+        #closing {
+            position: relative;
+            padding: 120px 0;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        #closingCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .closing-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .closing-content h2 {
+            font-family: var(--orbitron);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .closing-content p {
+            color: var(--gray);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 50px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            background: var(--bg);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-family: var(--mono);
+            font-size: 0.8rem;
+        }
+
+        .footer-copy {
+            color: var(--gray);
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            opacity: 0.5;
+        }
+
+        /* ANIMATIONS */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .animate-up {
+            animation: fadeInUp 1s forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.6s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.9s;
+        }
+
+        .delay-4 {
+            animation-delay: 1.2s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* MOUSE PARTICLES GLOW */
+        #heroCanvas {
+            mix-blend-mode: screen;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .risk-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="container nav-content">
+            <a href="#" class="logo"><span>HORUS</span></a>
+            <ul class="nav-links">
+                <li><a href="#risk">The Risk</a></li>
+                <li><a href="#pillars">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="app.html" class="btn btn-outline">Sign In</a>
+                <a href="app.html" class="btn btn-primary">Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="hero-bg-image"></div>
+        <canvas id="heroCanvas"></canvas>
+        <div class="hero-content">
+            <span class="hero-eyebrow animate-up">OFFENSIVE SECURITY SYSTEM V1.0</span>
+            <h1 class="hero-title animate-up delay-1">Autonomous cybersecurity for modern infrastructure</h1>
+            <p class="hero-subtitle animate-up delay-2" id="heroTyping"></p>
+            <div class="hero-cta animate-up delay-3">
+                <a href="app.html" class="btn btn-primary">Scan your network for free</a>
+            </div>
+            <div class="hero-stats animate-up delay-4">
+                <div class="stat-item">
+                    <span class="stat-val">43%</span>
+                    <span class="stat-lbl">are attacks on SMBs</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-val">$200K</span>
+                    <span class="stat-lbl">Average incident cost</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-val">&lt;1h</span>
+                    <span class="stat-lbl">To detect breaches</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RISK -->
+    <section id="risk">
+        <div class="container">
+            <div class="risk-grid">
+                <div class="risk-visual reveal">
+                    <img class="risk-gif" src="src/images/ataques-mundiales.gif"
+                        alt="Animated world map of cyber attacks" loading="lazy" decoding="async"
+                        referrerpolicy="no-referrer">
+                    <div class="risk-badge">[!] ACTIVE THREAT DETECTED</div>
+                </div>
+                <div class="risk-content">
+                    <span class="section-tag reveal">THE REAL RISK</span>
+                    <h2 class="section-title reveal">Does your company know how vulnerable it is today?</h2>
+                    <p class="reveal">In recent years, multiple organizations and institutions have been
+                        compromised by cyberattacks. If well-resourced entities can be
+                        breached, SMBs often become the next easy target.</p>
+                    <ul class="risk-list">
+                        <li class="reveal"><strong>Daily revenue loss</strong> while the system is
+                            hijacked.</li>
+                        <li class="reveal"><strong>Customer data leaks</strong> (Data Protection
+                            Laws).</li>
+                        <li class="reveal"><strong>Complete paralysis</strong> of business operations.</li>
+                        <li class="reveal">Horus costs less than $1 USD a day. An attack costs your entire company.</li>
+                    </ul>
+                    <div class="risk-quote reveal">
+                        “Why didn't anyone detect this earlier?” — The question that arises after every attack. Horus
+                        exists so you never have to ask it.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PILLARS -->
+    <section id="pillars">
+        <div class="container">
+            <div class="pillars-header">
+                <span class="section-tag reveal">THE 3 PILLARS</span>
+                <h2 class="section-title reveal">How Horus protects your infrastructure</h2>
+            </div>
+            <div class="pillars-grid">
+                <div class="pillar-card reveal">
+                    <span class="pillar-num">01</span>
+                    <span class="pillar-icon">[>>]</span>
+                    <h3>Network Scanning</h3>
+                    <p>Horus acts as an ethical hacker. It finds backdoors, open ports, and vulnerable services
+                        before attackers do.</p>
+                    <span class="pillar-tech">Nmap · NSE Scripts · Hydra</span>
+                </div>
+                <div class="pillar-card reveal" style="transition-delay: 0.2s;">
+                    <span class="pillar-num">02</span>
+                    <span class="pillar-icon">[AI]</span>
+                    <h3>Risk AI</h3>
+                    <p>Turns raw data into executive decisions. Our AI interprets findings and generates
+                        immediate prioritization reports.</p>
+                    <span class="pillar-tech">GPT-4 Engine · Executive PDF</span>
+                </div>
+                <div class="pillar-card reveal" style="transition-delay: 0.4s;">
+                    <span class="pillar-num">03</span>
+                    <span class="pillar-icon">[++]</span>
+                    <h3>Autonomous Protection</h3>
+                    <p>Proactive real-time monitoring. Horus natively applies defensive measures against detected breaches
+                        autonomously.</p>
+                    <span class="pillar-tech">Autonomous Remediation · 24/7</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing">
+        <div class="container">
+            <div class="pricing-header">
+                <span class="section-tag reveal">DEFENSE PLANS</span>
+                <h2 class="section-title reveal">Elite Cybersecurity accessible to SMBs</h2>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card reveal">
+                    <h4>WEEKLY</h4>
+                    <div class="price">$9 <span>/ week</span></div>
+                    <span class="save">&nbsp;</span>
+                    <ul class="pricing-features">
+                        <li>Full network scan</li>
+                        <li>Vulnerability detection</li>
+                        <li>Basic AI report</li>
+                        <li>Weekly active protection</li>
+                    </ul>
+                    <a href="app.html" class="btn btn-outline" style="width: 100%;">Select</a>
+                </div>
+                <div class="pricing-card pricing-card--featured reveal">
+                    <span class="featured-label">RECOMMENDED</span>
+                    <h4>MONTHLY</h4>
+                    <div class="price">$29 <span>/ month</span></div>
+                    <span class="save">Save $7 USD monthly!</span>
+                    <ul class="pricing-features">
+                        <li>24/7 continuous monitoring</li>
+                        <li>Immediate critical alerts</li>
+                        <li>Premium AI Executive Report</li>
+                        <li>Access to AI Chat Agent</li>
+                        <li>Simulation history</li>
+                    </ul>
+                    <a href="app.html" class="btn btn-primary" style="width: 100%;">Protect my company</a>
+                </div>
+                <div class="pricing-card reveal">
+                    <h4>ANNUAL</h4>
+                    <div class="price">$290 <span>/ year</span></div>
+                    <span class="save">2 months free included!</span>
+                    <ul class="pricing-features">
+                        <li>Everything in the Monthly plan</li>
+                        <li>Multi-user access</li>
+                        <li>Priority response SLA</li>
+                        <li>Full corporate dashboard</li>
+                    </ul>
+                    <a href="app.html" class="btn btn-outline" style="width: 100%;">Select</a>
+                </div>
+            </div>
+            <p class="pricing-note reveal">Free trial available for 24 hours — no credit card required.</p>
+        </div>
+    </section>
+
+    <!-- CLOSING -->
+    <section id="closing">
+        <canvas id="closingCanvas"></canvas>
+        <div class="closing-content container">
+            <h2 class="reveal">The future is not waiting for the attack. <br>It is being <span
+                    style="color:var(--accent);">immune</span> to them.</h2>
+            <p class="reveal">Every company deserves enterprise-grade defense. Start your defense today.</p>
+            <div class="reveal" style="display:flex; gap:20px; justify-content:center;">
+                <a href="app.html" class="btn btn-primary btn-lg">Scan your network for free now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#risk">The Risk</a>
+                <a href="#pillars">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="app.html">Platform</a>
+            </div>
+            <p class="footer-copy">HORUS SECURITY PLATFORM &copy; 2026 · AUTONOMOUS DEFENSE SYSTEM</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        /* Hero Particle Network - Hybrid (Mouse Following from SaaS version) */
+        (function () {
+            const canvas = document.getElementById('heroCanvas');
+            const ctx = canvas.getContext('2d');
+            let W, H, nodes = [];
+            const MAX_DIST = 140;
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', () => { resize(); boot(); });
+            resize();
+
+            function boot() {
+                const count = Math.floor(W * H / 10000);
+                nodes = [];
+                for (let i = 0; i < count; i++) {
+                    nodes.push({
+                        x: Math.random() * W, y: Math.random() * H,
+                        vx: (Math.random() - 0.5) * 0.4,
+                        vy: (Math.random() - 0.5) * 0.4,
+                        r: Math.random() * 1.5 + 0.5,
+                        a: Math.random() * 0.5 + 0.2
+                    });
+                }
+            }
+            boot();
+
+            let mouse = { x: -1000, y: -1000 };
+            document.addEventListener('mousemove', e => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+
+            function draw() {
+                ctx.clearRect(0, 0, W, H);
+
+                nodes.forEach(n => {
+                    n.x += n.vx; n.y += n.vy;
+                    if (n.x < 0) n.x = W; if (n.x > W) n.x = 0;
+                    if (n.y < 0) n.y = H; if (n.y > H) n.y = 0;
+
+                    // Mouse influence
+                    const dx_m = mouse.x - n.x, dy_m = mouse.y - n.y;
+                    const dist_m = Math.sqrt(dx_m * dx_m + dy_m * dy_m);
+                    if (dist_m < 200) {
+                        n.vx += dx_m / dist_m * 0.01;
+                        n.vy += dy_m / dist_m * 0.01;
+                    }
+
+                    // Clamp velocity
+                    const spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
+                    if (spd > 0.8) { n.vx *= 0.95; n.vy *= 0.95; }
+
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(34, 211, 238, ${n.a})`;
+                    ctx.fill();
+                });
+
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < MAX_DIST) {
+                            const alpha = (1 - dist / MAX_DIST) * 0.2;
+                            ctx.strokeStyle = `rgba(34, 211, 238, ${alpha})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        /* Closing Three.js Wave */
+        (function () {
+            const canvas = document.getElementById('closingCanvas');
+            if (!canvas) return;
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            function resizeClosingScene() {
+                const width = canvas.clientWidth || canvas.offsetWidth || 1;
+                const height = canvas.clientHeight || canvas.offsetHeight || 1;
+                renderer.setSize(width, height, false);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            }
+            resizeClosingScene();
+
+            const geometry = new THREE.PlaneGeometry(90, 30, 120, 60);
+            const material = new THREE.MeshBasicMaterial({ color: 0x22d3ee, wireframe: true, transparent: true, opacity: 0.1 });
+            const plane = new THREE.Mesh(geometry, material);
+            plane.rotation.x = -Math.PI / 2;
+            scene.add(plane);
+            camera.position.set(0, 5, 10);
+            camera.lookAt(0, 0, 0);
+            window.addEventListener('resize', resizeClosingScene);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                const time = Date.now() * 0.001;
+                const positions = geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    const x = positions[i];
+                    const z = positions[i + 2];
+                    positions[i + 1] = Math.sin(x * 0.3 + time) * 0.5 + Math.cos(z * 0.3 + time) * 0.5;
+                }
+                geometry.attributes.position.needsUpdate = true;
+                renderer.render(scene, camera);
+            }
+            animate();
+        })();
+
+        /* Hero Typing Effect */
+        (function () {
+            const el = document.getElementById('heroTyping');
+            const phrases = [
+                "Horus detects vulnerabilities before attackers do.",
+                "AI that turns data into executive decisions.",
+                "Proactive security. Never reactive. Never late.",
+                "The autonomous shield for your company."
+            ];
+            let i = 0, j = 0, isDeleting = false;
+            function type() {
+                const current = phrases[i];
+                if (isDeleting) {
+                    el.textContent = current.substring(0, j - 1);
+                    j--;
+                } else {
+                    el.textContent = current.substring(0, j + 1);
+                    j++;
+                }
+                if (!isDeleting && j === current.length) {
+                    isDeleting = true;
+                    setTimeout(type, 2000);
+                } else if (isDeleting && j === 0) {
+                    isDeleting = false;
+                    i = (i + 1) % phrases.length;
+                    setTimeout(type, 500);
+                } else {
+                    setTimeout(type, isDeleting ? 30 : 60);
+                }
+            }
+            type();
+        })();
+
+        /* Scroll Reveal */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>
